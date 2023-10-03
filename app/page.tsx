@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Searchbar from "@/components/Searchbar";
 import HeroCarousel from "@/components/HeroCarousel";
+import Product from "@/components/Product";
 
 const Home = () => {
   return (
@@ -39,9 +40,7 @@ const Home = () => {
         <h2 className="section-text">Popping</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-16">
-          {["iphone", "book", "sneakers"].map((product) => (
-            <div>{product}</div>
-          ))}
+          <Product />
         </div>
       </section>
     </>

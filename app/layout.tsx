@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "shopping scrapper",
+  title: "jumia scrapper",
   description: "the best online shopping scrapper tool",
 };
 

@@ -99,7 +99,7 @@ export async function scrapeJumiaProduct(url: string) {
 
     const discount = originalPriceNumeric - currentPriceNumeric;
 
-    console.log({
+    const scrapedData = {
       title,
       currentPrice,
       originalPrice,
@@ -109,7 +109,9 @@ export async function scrapeJumiaProduct(url: string) {
       productReviews: reviews,
       productImages,
       discount,
-    });
+    };
+
+    return scrapedData;
   } catch (error: any) {
     throw new Error(`Failed to scrape product: ${error.message}`);
   }
