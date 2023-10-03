@@ -92,6 +92,13 @@ export async function scrapeJumiaProduct(url: string) {
       }
     });
 
+    const currentPriceNumeric = parseFloat(currentPrice.replace(/[^\d.]/g, ""));
+    const originalPriceNumeric = parseFloat(
+      originalPrice.replace(/[^\d.]/g, ""),
+    );
+
+    const discount = originalPriceNumeric - currentPriceNumeric;
+
     console.log({
       title,
       currentPrice,
@@ -101,6 +108,7 @@ export async function scrapeJumiaProduct(url: string) {
       productDetails,
       productReviews: reviews,
       productImages,
+      discount,
     });
   } catch (error: any) {
     throw new Error(`Failed to scrape product: ${error.message}`);
