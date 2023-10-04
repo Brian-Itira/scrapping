@@ -5,7 +5,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ["mongoose"],
   },
   images: {
-    domains: ["m.media-jumia.com"],
+    domains: ["ke.jumia.is"],
   },
 };
 

@@ -2,6 +2,7 @@
 
 import React, { useState, FormEvent } from "react";
 import { scrapeJumiaProduct } from "@/lib/scraper";
+import Image from "next/image";
 
 const isValidJumiaProductURL = (url: string) => {
   try {
@@ -25,7 +26,9 @@ const isValidJumiaProductURL = (url: string) => {
 const Searchbar = () => {
   const [searchPrompt, setSearchPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [scrapedProduct, setScrapedProduct] = useState(null);
+  const [scrapedProduct, setScrapedProduct] = useState({
+    productImages: [],
+  });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -50,36 +53,58 @@ const Searchbar = () => {
   };
 
   return (
-    <div>
-      <form className="flex flex-wrap gap-4 mt-12" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Put your Jumia product link here"
-          className="searchbar-input"
-          value={searchPrompt}
-          onChange={(e) => setSearchPrompt(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="searchbar-btn"
-          disabled={searchPrompt === ""}
-        >
-          {isLoading ? "Scraping..." : "Scrape"}
-        </button>
-      </form>
+    <>
+      <div>
+        <form className="flex flex-wrap gap-4 mt-12" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Put your Jumia product link here"
+            className="searchbar-input"
+            value={searchPrompt}
+            onChange={(e) => setSearchPrompt(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="searchbar-btn"
+            disabled={searchPrompt === ""}
+          >
+            {isLoading ? "Scraping..." : "Scrape"}
+          </button>
+        </form>
 
-      {scrapedProduct && (
-        <div>
-          <h1>{scrapedProduct.title}</h1>
-          <p>Current Price: {scrapedProduct.currentPrice}</p>
-          <p>Original Price: {scrapedProduct.originalPrice}</p>
-          <img src={scrapedProduct.imageUrl} alt="Product" />
-          <p>Delivery Fees: {scrapedProduct.deliveryFees}</p>
-          <p>Product Details: {scrapedProduct.productDetails}</p>
-        
-        </div>
-      )}
-    </div>
+        {scrapedProduct && (
+          <div>
+            <h1>{scrapedProduct.title}</h1>
+            <p>Current Price: {scrapedProduct.currentPrice}</p>
+
+            <p>Original Price: {scrapedProduct.originalPrice}</p>
+
+            <Image
+              src={scrapedProduct.imageUrl}
+              alt="image-url"
+              height={500}
+              width={500}
+            />
+
+            <p>Delivery Fees: {scrapedProduct.deliveryFees}</p>
+
+            <p>Product Details: {scrapedProduct.productDetails}</p>
+
+            <div>
+              {scrapedProduct.productImages.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  alt={`image-${index}`}
+                  height={60}
+                  width={60}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
