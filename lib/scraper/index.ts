@@ -1,4 +1,4 @@
-"use server";
+"use server"
 
 import axios from "axios";
 import * as cheerio from "cheerio";
@@ -11,10 +11,19 @@ interface Review {
   verified: boolean;
 }
 
-const reviews: Review[] = [];
+interface Product {
+  title: string;
+  currentPrice: string;
+  originalPrice: string;
+  imageUrl: string | undefined;
+  deliveryFees: string;
+  productDetails: string;
+  productReviews: Review[];
+  productImages: string[];
+}
 
-export async function scrapeJumiaProduct(url: string) {
-  if (!url) return;
+export async function scrapeJumiaProduct(url: string): Promise<Product | undefined> {
+  if (!url) return undefined;
 
   const username = "brd-customer-hl_dc7cd116-zone-jumia";
   const password = "34gzv9p9rdqc";
@@ -42,24 +51,17 @@ export async function scrapeJumiaProduct(url: string) {
     const $ = cheerio.load(response.data);
 
     const title = $("h1.-fs20.-pts.-pbxs").text().trim();
-
     const currentPrice = $("span.-b.-ltr.-tal.-fs24.-prxs").text().trim();
-
     const originalPrice = $("span.-tal.-gy5.-lthr.-fs16.-pvxs").text().trim();
-
-    const imageUrl = $("img.-fw.-fh").attr("data-src");
-
+    const imageUrl = $("img.-fw.-fh").attr("data-src") || undefined;
     const deliveryFees = $("div.markup.-ptxs em").text().trim();
-
     const productDetails = $("div.markup.-mhm.-pvl.-oxa.-sc").text().trim();
 
     const reviewsSection = $("div.cola.-phm.-df.-d-co");
-
-    const reviews = [];
+    const productReviews: Review[] = [];
 
     reviewsSection.find("article.-pvs.-hr._bet").each((index, element) => {
       const reviewElement = $(element);
-
       const rating = reviewElement.find("div.stars").text().trim();
       const reviewTitle = reviewElement.find("h3.-m.-fs16.-pvs").text().trim();
       const reviewContent = reviewElement.find("p.-pvs").text().trim();
@@ -68,8 +70,7 @@ export async function scrapeJumiaProduct(url: string) {
         .text()
         .trim();
       const isVerified =
-        reviewElement.find("div.-df.-i-ctr.-gn5.-fsh0 svg.ic.-f-gn5").length >
-        0;
+        reviewElement.find("div.-df.-i-ctr.-gn5.-fsh0 svg.ic.-f-gn5").length > 0;
 
       const reviewData = {
         rating,
@@ -79,10 +80,10 @@ export async function scrapeJumiaProduct(url: string) {
         verified: isVerified,
       };
 
-      reviews.push(reviewData);
+      productReviews.push(reviewData);
     });
 
-    const productImages = [];
+    const productImages: string[] = [];
     const imagesCarousel = $("#imgs-crsl .itm img");
 
     imagesCarousel.each((index, element) => {
@@ -92,17 +93,20 @@ export async function scrapeJumiaProduct(url: string) {
       }
     });
 
-    console.log({
+    const scrapedProduct: Product = {
       title,
       currentPrice,
       originalPrice,
       imageUrl,
       deliveryFees,
       productDetails,
-      productReviews: reviews,
+      productReviews,
       productImages,
-    });
+    };
+
+    return scrapedProduct;
   } catch (error: any) {
-    throw new Error(`Failed to scrape product: ${error.message}`);
+    console.error(`Failed to scrape product: ${error.message}`);
+    return undefined;
   }
 }
