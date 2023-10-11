@@ -42,7 +42,7 @@ const Searchbar = () => {
 
     
       console.log("Scraped Product:", product);
-    } catch (error) {
+    } catch (error:any) {
      
       console.error("Scraping Error:", error.message);
     } finally {
