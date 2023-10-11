@@ -15,7 +15,7 @@ const isValidJumiaProductURL = (url: string) => {
     ) {
       return true;
     }
-  } catch (error) {
+  } catch (error:any) {
     return false;
   }
 
